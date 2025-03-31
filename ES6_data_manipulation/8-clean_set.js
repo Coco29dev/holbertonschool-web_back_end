@@ -1,14 +1,16 @@
 export default function cleanSet(set, startString) {
-  if (startString === '' || !startString) {
+  if (!startString || typeof startString !== 'string' || startString === '') {
     return '';
   }
 
   const result = [];
 
-  for (const string of set) {
-    if (string.startsWith(startString)) {
-      const suffix = string.slice(startString.length);
-      result.push(suffix);
+  for (const value of set) {
+    if (typeof value === 'string' && value && value.startsWith(startString)) {
+      const suffix = value.slice(startString.length);
+      if (suffix) {
+        result.push(suffix);
+      }
     }
   }
 
