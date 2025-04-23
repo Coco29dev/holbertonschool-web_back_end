@@ -3,7 +3,9 @@
 Module pour des opérations mathématiques simples sur les flottants.
 """
 
+
 import math
+
 
 def floor(n: float) -> int:
     """

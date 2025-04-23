@@ -3,7 +3,9 @@
 Module pour effectuer des opérations sur des listes numériques.
 """
 
+
 from typing import List
+
 
 def sum_list(input_list: List[float]) -> float:
     """
