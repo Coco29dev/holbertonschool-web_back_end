@@ -3,6 +3,7 @@
 Module pour créer une tâche asynchrone avec un délai aléatoire.
 """
 
+
 import asyncio
 
 wait_random = __import__('0-basic_async_syntax').wait_random
