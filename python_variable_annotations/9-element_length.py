@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
 Module pour calculer la longueur des éléments dans une séquence itérable.
 """

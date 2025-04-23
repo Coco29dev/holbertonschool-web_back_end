@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
 Module pour effectuer la somme d'une liste avec des entiers et des flottants.
 """
