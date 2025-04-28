@@ -7,10 +7,10 @@ Génère des nombres aléatoires de manière asynchrone.
 
 import asyncio
 import random
-from typing import AsyncIterable
+from typing import AsyncGenerator
 
 
-async def async_generator() -> AsyncIterable[float]:
+async def async_generator() -> AsyncGenerator[float, None]:
     """
     Coroutine asynchrone générant 10 nombres
     flottants aléatoires entre 0 et 10,
@@ -19,5 +19,6 @@ async def async_generator() -> AsyncIterable[float]:
 
     for _ in range(10):
         i = random.uniform(0, 10)
-        yield i
         await asyncio.sleep(1)
+        yield i
+        
