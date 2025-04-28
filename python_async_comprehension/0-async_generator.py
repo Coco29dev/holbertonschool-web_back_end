@@ -10,7 +10,7 @@ import random
 from typing import AsyncGenerator
 
 
-async def async_generator() -> AsyncGenerator[float, None]:
+async def async_generator() -> AsyncGenerator[float, float]:
     """
     Coroutine asynchrone générant 10 nombres
     flottants aléatoires entre 0 et 10,
