@@ -16,9 +16,7 @@ async def async_generator() -> AsyncGenerator[float, None]:
     flottants aléatoires entre 0 et 10,
     avec une pause d'une seconde entre chaque génération.
     """
-    resultat = []
+
     for _ in range(10):
         await asyncio.sleep(1)
-        i = random.uniform(0, 10)
-        resultat.append(i)
-        yield i
+        yield random.uniform(0, 10)
