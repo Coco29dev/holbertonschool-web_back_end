@@ -1,7 +1,15 @@
 const readline = require('node:readline');
 const { stdin: input, stdout: output } = require('node:process');
 
-const line = readline.createInterface({ input, output });
+const isPipe = !process.stdin.isTTY;
+
+const lineConfig = {
+  input,
+  output,
+  terminal: !isPipe,
+};
+
+const line = readline.createInterface(lineConfig);
 
 console.log('Welcome to Holberton School, what is your name?');
 
