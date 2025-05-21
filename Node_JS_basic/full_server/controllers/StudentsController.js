@@ -6,9 +6,8 @@ class StudentsController {
 
     try {
       const studentsByField = await readDatabase(database);
-      const fields = Object.keys(studentsByField).sort((a, b) =>
-        a.toLowerCase().localeCompare(b.toLowerCase())
-      );
+      const sortMethod = (a, b) => a.toLowerCase().localeCompare(b.toLowerCase());
+      const fields = Object.keys(studentsByField).sort(sortMethod);
 
       let response = 'This is the list of our students\n';
 
@@ -18,7 +17,6 @@ class StudentsController {
       }
 
       res.status(200).type('text/plain').send(response.trim());
-
     } catch (error) {
       res.status(500).send('Cannot load the database');
     }
@@ -35,9 +33,9 @@ class StudentsController {
     try {
       const studentsByField = await readDatabase(database);
       const list = studentsByField[major] || [];
-      res.status(200).send(`List: ${list.join(', ')}`);
+      return res.status(200).send(`List: ${list.join(', ')}`);
     } catch (error) {
-      res.status(500).send('Cannot load the database');
+      return res.status(500).send('Cannot load the database');
     }
   }
 }
