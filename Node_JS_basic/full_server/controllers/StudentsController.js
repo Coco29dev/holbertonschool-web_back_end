@@ -1,4 +1,4 @@
-const readDatabase = require('../utils');
+import readDatabase from '../utils';
 
 class StudentsController {
   static async getAllStudents(req, res) {
@@ -10,19 +10,17 @@ class StudentsController {
         a.toLowerCase().localeCompare(b.toLowerCase())
       );
 
-      let réponse = 'This is the list of our students\n';
+      let response = 'This is the list of our students\n';
 
       for (const field of fields) {
         const list = studentsByField[field];
-        réponse += `Nimber od students in ${field}: ${list.length}. List: ${list.join(', ')}\n`;
+        response += `Number of students in ${field}: ${list.length}. List: ${list.join(', ')}\n`;
       }
 
-      res.status(200).type('text/plain').send(réponse.trim());
+      res.status(200).type('text/plain').send(response.trim());
 
     } catch (error) {
-
       res.status(500).send('Cannot load the database');
-
     }
   }
 
@@ -31,9 +29,7 @@ class StudentsController {
     const { major } = req.params;
 
     if (major !== 'CS' && major !== 'SWE') {
-
-      return res.status(500).send('Major paramter must be CS or SWE');
-
+      return res.status(500).send('Major parameter must be CS or SWE');
     }
 
     try {
@@ -46,4 +42,4 @@ class StudentsController {
   }
 }
 
-module.exports = StudentsController;
+export default StudentsController;
