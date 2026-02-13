@@ -25,3 +25,11 @@ class LIFOCache(BaseCaching):
             print("DISCARD: {}".format(discard))
             del self.cache_data[discard]
         self.cache_data[key] = item
+
+    def get(self, key):
+        """ Return the value in self.cache_data linked to key.
+            If key is None or doesn't exist, return None.
+        """
+        if key is None:
+            return None
+        return self.cache_data.get(key)
