@@ -3,9 +3,10 @@
 Module that contains the function filter_datum
 """
 import re
+from typing import List
 
 
-def filter_datum(fields, redaction, message, separator):
+def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
     """Returns the log message obfuscated"""
     return re.sub(
         r'(' + '|'.join(fields) + r')=[^' + separator + r']*',
