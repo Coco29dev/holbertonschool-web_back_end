@@ -8,7 +8,6 @@ import logging
 import os
 from typing import List, Tuple
 import mysql.connector
-from mysql.connector.connection import MySQLConnection
 
 
 def filter_datum(fields: List[str], redaction: str,
@@ -43,7 +42,7 @@ class RedactingFormatter(logging.Formatter):
 PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
 
 
-def get_db() -> MySQLConnection:
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """Returns a MySQL database connector using
     environment variable credentials."""
     return mysql.connector.connect(
