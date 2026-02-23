@@ -5,9 +5,10 @@ Module that contains the function filter_datum
 import re
 import logging
 import os
-from typing import List, Tuple
+from typing import List, Tuple, TYPE_CHECKING
 import mysql.connector
-from mysql.connector.connection import MySQLConnection
+if TYPE_CHECKING:
+    from mysql.connector.connection import MySQLConnection
 
 
 def filter_datum(fields: List[str], redaction: str,
