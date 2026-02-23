@@ -4,7 +4,10 @@ Module that contains the function filter_datum
 """
 import re
 import logging
+import os
 from typing import List, Tuple
+import mysql.connector
+from mysql.connector.connection import MySQLConnection
 
 
 def filter_datum(fields: List[str], redaction: str,
@@ -36,6 +39,16 @@ class RedactingFormatter(logging.Formatter):
 
 
 PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
+
+
+def get_db() -> MySQLConnection:
+    """Returns a connector to the database"""
+    return mysql.connector.connect(
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        database=os.getenv("PERSONAL_DATA_DB_NAME")
+    )
 
 
 def get_logger() -> logging.Logger:
