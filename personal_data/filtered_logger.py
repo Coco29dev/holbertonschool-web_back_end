@@ -62,3 +62,27 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
     logger.addHandler(handler)
     return logger
+
+
+def main():
+    """Main function that retrieves and displays user data with filtering."""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+
+    logger = get_logger()
+
+    columns = [col[0] for col in cursor.description]
+
+    for row in cursor.fetchall():
+        row_dict = dict(zip(columns, row))
+        message = "; ".join(f"{key}={value}" for key,
+                            value in row_dict.items()) + ";"
+        logger.info(message)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
