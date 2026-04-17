@@ -42,15 +42,22 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """Find a user by arbitrary keyword arguments
-
-        Args:
-            **kwargs: column/value pairs used to filter the users table
-
-        Returns:
-            The first User row matching the filter
-
-        Raises:
-            NoResultFound: when no row matches
-            InvalidRequestError: when a wrong query argument is passed
         """
         return self._session.query(User).filter_by(**kwargs).one()
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Update a user's attributes
+
+        Args:
+            user_id: id of the user to update
+            **kwargs: attribute/value pairs to update on the user
+
+        Raises:
+            ValueError: if a kwarg does not match a User attribute
+        """
+        user = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError
+            setattr(user, key, value)
+        self._session.commit()
