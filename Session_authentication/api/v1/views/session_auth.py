@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
-""" Module of Session Auth views
 """
-from flask import jsonify, request, make_response, abort
-from api.v1.views import app_views
-from models.user import User
+Session auth views
+"""
 from os import getenv
+from api.v1.views import app_views
+from flask import jsonify, request, abort
+from models.user import User
 
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
-def login() -> str:
-    """ POST /api/v1/auth_session/login
+def auth_session_login():
+    """
+    Login route for session authentication
     """
     email = request.form.get('email')
-    password = request.form.get('password')
-
-    if not email:
+    if email is None or email == "":
         return jsonify({"error": "email missing"}), 400
-    if not password:
+
+    password = request.form.get('password')
+    if password is None or password == "":
         return jsonify({"error": "password missing"}), 400
 
     users = User.search({"email": email})
-    if not users:
+    if users is None or len(users) == 0:
         return jsonify({"error": "no user found for this email"}), 404
 
     user = users[0]
@@ -30,17 +32,20 @@ def login() -> str:
     from api.v1.app import auth
     session_id = auth.create_session(user.id)
 
-    response = make_response(jsonify(user.to_json()))
+    response = jsonify(user.to_json())
     response.set_cookie(getenv("SESSION_NAME"), session_id)
     return response
 
 
 @app_views.route('/auth_session/logout', methods=['DELETE'],
                  strict_slashes=False)
-def logout() -> str:
-    """ DELETE /api/v1/auth_session/logout
+def auth_session_logout():
+    """
+    Logout route for session authentication
     """
     from api.v1.app import auth
-    if not auth.destroy_session(request):
+
+    destroyed = auth.destroy_session(request)
+    if not destroyed:
         abort(404)
     return jsonify({}), 200
