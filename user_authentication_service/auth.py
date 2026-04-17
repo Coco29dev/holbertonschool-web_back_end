@@ -23,16 +23,6 @@ class Auth:
 
     def register_user(self, email: str, password: str) -> User:
         """Register a new user
-
-        Args:
-            email: the user's email
-            password: the user's plain-text password
-
-        Returns:
-            The newly created User object
-
-        Raises:
-            ValueError: if a user with the given email already exists
         """
         try:
             self._db.find_user_by(email=email)
@@ -40,3 +30,19 @@ class Auth:
             hashed = _hash_password(password)
             return self._db.add_user(email, hashed)
         raise ValueError("User {} already exists".format(email))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """Validate a login attempt
+
+        Args:
+            email: the user's email
+            password: the plain-text password to check
+
+        Returns:
+            True if the credentials match an existing user, False otherwise
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return False
+        return bcrypt.checkpw(password.encode("utf-8"), user.hashed_password)
