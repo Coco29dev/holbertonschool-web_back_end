@@ -5,6 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 from user import Base, User
 
@@ -32,15 +34,23 @@ class DB:
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """Add a new user to the database
-
-        Args:
-            email: the user's email
-            hashed_password: the user's hashed password
-
-        Returns:
-            The newly created User object
         """
         new_user = User(email=email, hashed_password=hashed_password)
         self._session.add(new_user)
         self._session.commit()
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Find a user by arbitrary keyword arguments
+
+        Args:
+            **kwargs: column/value pairs used to filter the users table
+
+        Returns:
+            The first User row matching the filter
+
+        Raises:
+            NoResultFound: when no row matches
+            InvalidRequestError: when a wrong query argument is passed
+        """
+        return self._session.query(User).filter_by(**kwargs).one()
