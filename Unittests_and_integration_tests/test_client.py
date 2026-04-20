@@ -73,5 +73,36 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test class for GithubOrgClient class."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up class for integration tests."""
+        cls.get_patcher = patch('client.get_json')
+        cls.mock_get_json = cls.get_patcher.start()
+
+        cls.mock_get_json.side_effect = [
+            {"repos_url": "https://api.github.com/orgs/test/repos"},
+            [
+                {"name": "repo1", "license": {"key": "my_license"}},
+                {"name": "repo2", "license": {"key": "other_license"}},
+                {"name": "repo3", "license": {"key": "my_license"}},
+            ],
+        ]
+
+    @classmethod
+    def tearDownClass(cls):
+        """Tear down class for integration tests."""
+        cls.get_patcher.stop()
+
+    def test_public_repos_with_license(self):
+        """Test that public_repos returns the expected list of repos with license."""
+        client = GithubOrgClient("test")
+        result = client.public_repos(license="my_license")
+
+        self.assertEqual(result, ["repo1", "repo3"])
+
+
 if __name__ == "__main__":
     unittest.main()
