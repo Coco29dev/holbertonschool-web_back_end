@@ -2,6 +2,7 @@
 """Unit tests for client module."""
 import unittest
 from unittest.mock import patch
+from utils import memoize
 from parameterized import parameterized
 from client import GithubOrgClient
 
@@ -25,6 +26,16 @@ class TestGithubOrgClient(unittest.TestCase):
             f"https://api.github.com/orgs/{org_name}"
         )
         self.assertEqual(result, expected_payload)
+
+    def test_public_repos_url(self):
+        """Test that _public_repos_url returns the expected URL."""
+        org_name = "google"
+        expected_url = "https://api.github.com/orgs/google/repos"
+
+        client = GithubOrgClient(org_name)
+        result = client._public_repos_url
+
+        self.assertEqual(result, expected_url)
 
 
 if __name__ == "__main__":
