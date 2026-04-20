@@ -63,6 +63,14 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_public_repos_url.assert_called_once()
             mock_get_json.assert_called_once()
 
+    def test_has_license(self):
+        """Test that has_license returns the expected boolean."""
+        repo = {"license": {"key": "my_license"}}, license_key = "my_license"
+        repo = {"license": {"key": "other_license"}}, license_key = "my_license"
+
+        self.assertTrue(GithubOrgClient.has_license(*repo, license_key))
+        self.assertFalse(GithubOrgClient.has_license(*repo, license_key))
+
 
 if __name__ == "__main__":
     unittest.main()
