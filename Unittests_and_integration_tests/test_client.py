@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Unit tests for client module."""
 import unittest
-from unittest.mock import patch, PropertyMock
-from utils import memoize
-from parameterized import parameterized
+from unittest.mock import patch, PropertyMock, Mock
+from fixtures import TEST_PAYLOAD
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 
 
@@ -73,37 +73,33 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    TEST_PAYLOAD,
+)
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration test class for GithubOrgClient class."""
+    """Integration test class for GithubOrgClient."""
 
     @classmethod
     def setUpClass(cls):
-        """Set up class for integration tests."""
-        cls.get_patcher = patch('client.get_json')
-        cls.mock_get_json = cls.get_patcher.start()
+        """Start patching requests.get before any test runs."""
+        cls.get_patcher = patch('requests.get')
+        mock_get = cls.get_patcher.start()
 
-        cls.mock_get_json.side_effect = [
-            {"repos_url": "https://api.github.com/orgs/test/repos"},
-            [
-                {"name": "repo1", "license": {"key": "my_license"}},
-                {"name": "repo2", "license": {"key": "other_license"}},
-                {"name": "repo3", "license": {"key": "my_license"}},
-            ],
-        ]
+        def side_effect(url):
+            mock_response = Mock()
+            if url == GithubOrgClient.ORG_URL.format(org="google"):
+                mock_response.json.return_value = cls.org_payload
+            elif url == cls.org_payload["repos_url"]:
+                mock_response.json.return_value = cls.repos_payload
+            return mock_response
+
+        mock_get.side_effect = side_effect
 
     @classmethod
     def tearDownClass(cls):
-        """Tear down class for integration tests."""
+        """Stop patching after all tests have run."""
         cls.get_patcher.stop()
-
-    @parameterized.expand([
-        ("test", ["repo1", "repo2", "repo3"]),
-    ])
-    def test_public_repos_integration(self, org_name, expected_repos):
-        """Test that public_repos returns the expected list of repos."""
-        client = GithubOrgClient(org_name)
-        result = client.public_repos()
-        self.assertEqual(result, expected_repos)
 
 
 if __name__ == "__main__":
