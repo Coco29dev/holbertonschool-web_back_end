@@ -96,12 +96,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Tear down class for integration tests."""
         cls.get_patcher.stop()
 
-    def test_public_repos_with_license(self):
-        """Test that public_repos returns the expected list of repos with license."""
-        client = GithubOrgClient("test")
-        result = client.public_repos(license="my_license")
-
-        self.assertEqual(result, ["repo1", "repo3"])
+    @parameterized.expand([
+        ("test", ["repo1", "repo2", "repo3"]),
+    ])
+    def test_public_repos_integration(self, org_name, expected_repos):
+        """Test that public_repos returns the expected list of repos."""
+        client = GithubOrgClient(org_name)
+        result = client.public_repos()
+        self.assertEqual(result, expected_repos)
 
 
 if __name__ == "__main__":
