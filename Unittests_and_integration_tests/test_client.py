@@ -73,7 +73,8 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_public_repos_with_license(self):
-        """Test that public_repos with license filtering returns expected repos."""
+        """Test that public_repos with license filter return expected repos"""
+
         test_payload = [
             {"name": "repo1", "license": {"key": "my_license"}},
             {"name": "repo2", "license": {"key": "other_license"}},
