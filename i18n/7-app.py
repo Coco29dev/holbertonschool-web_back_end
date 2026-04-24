@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Flask app with mocked user login and user locale support."""
+"""Flask app with mocked user login, locale, and timezone support."""
 from typing import Dict, Optional
 
+import pytz
 from flask import Flask, g, render_template, request
 from flask_babel import Babel
+from pytz.exceptions import UnknownTimeZoneError
 
 
 class Config:
@@ -69,13 +71,34 @@ def get_locale() -> str:
     return app.config["BABEL_DEFAULT_LOCALE"]
 
 
-def get_timezone():
-    user = getattr(g, 'user', None)
+def get_timezone() -> str:
+    """Select the best matching timezone for the current request."""
+    timezone = request.args.get("timezone")
+    if timezone is not None:
+        try:
+            pytz.timezone(timezone)
+            return timezone
+        except UnknownTimeZoneError:
+            pass
+
+    user = getattr(g, "user", None)
     if user is not None:
-        return user.timezone
+        timezone = user.get("timezone")
+        if timezone is not None:
+            try:
+                pytz.timezone(timezone)
+                return timezone
+            except UnknownTimeZoneError:
+                pass
+
+    return app.config["BABEL_DEFAULT_TIMEZONE"]
 
 
-babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
+babel.init_app(
+    app,
+    locale_selector=get_locale,
+    timezone_selector=get_timezone,
+)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Basic Flask app."""
 from flask import Flask, render_template, request
-from flask_babel import Babel, gettext
+from flask_babel import Babel
 
 
 app = Flask(__name__)
@@ -16,9 +16,10 @@ def index():
 
 def get_locale():
     """Get the locale for the request."""
-    babel.init_app(app, locale_selector=get_locale)
     return request.accept_languages.best_match(['de', 'fr', 'en'])
 
+
+babel.init_app(app, locale_selector=get_locale)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
