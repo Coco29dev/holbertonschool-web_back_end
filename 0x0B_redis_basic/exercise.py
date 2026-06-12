@@ -3,6 +3,7 @@
 Exercise module for Redis basic operations
 """
 import redis
+import functools
 import uuid
 from typing import Union, Callable, Optional
 
@@ -15,6 +16,24 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    def count_calls(method: Callable) -> Callable:
+        """
+        Decorator that counts how many times a method is called
+
+        Args:
+            method: The method to wrap
+
+        Returns:
+            The wrapped method that increments a counter in Redis
+        """
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            """Increment the call count and call the original method"""
+            self._redis.incr(method.__qualname__)
+            return method(self, *args, **kwargs)
+        return wrapper
+
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Store data in Redis with a random key
