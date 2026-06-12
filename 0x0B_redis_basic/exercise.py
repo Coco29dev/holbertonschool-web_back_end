@@ -114,3 +114,23 @@ class Cache:
             The data converted to an int
         """
         return self.get(key, fn=int)
+
+
+def replay(method: Callable) -> None:
+    """
+    Display the history of calls of a particular function
+
+    Args:
+        method: The method whose call history will be displayed
+    """
+    redis_client = method.__self__._redis
+    qualname = method.__qualname__
+    count = redis_client.get(qualname)
+    count = int(count) if count else 0
+    print("{} was called {} times:".format(qualname, count))
+    inputs = redis_client.lrange(qualname + ":inputs", 0, -1)
+    outputs = redis_client.lrange(qualname + ":outputs", 0, -1)
+    for inp, out in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(qualname,
+                                     inp.decode("utf-8"),
+                                     out.decode("utf-8")))
