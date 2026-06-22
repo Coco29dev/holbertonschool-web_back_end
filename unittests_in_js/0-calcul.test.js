@@ -1,19 +1,28 @@
-import assert from "assert";
-import calculateNumber from './0-calcul.js';
+const assert = require('assert');
+const calculateNumber = require('./0-calcul.js');
 
 describe('calculateNumber', function () {
-  const tests = [
-    { a: 1, b: 3, expected: 4 },
-    { a: 1, b: 3.7, expected: 5 },
-    { a: 1.2, b: 3.7, expected: 5 },
-    { a: 1.5, b: 3.7, expected: 6 },
-    { a: -1.2, b: -3.7, expected: -5 }
-  ];
+  it('retourne la somme de deux entiers', function () {
+    assert.strictEqual(calculateNumber(1, 3), 4);
+  });
 
-  tests.forEach(({ a, b, expected }) => {
-    it(`should return ${expected} when a=${a} and b=${b}`, function () {
-      const result = calculateNumber(a, b);
-      assert.strictEqual(result, expected);
-    });
+  it('arrondit b vers le haut', function () {
+    assert.strictEqual(calculateNumber(1, 3.7), 5);
+  });
+
+  it('arrondit a vers le bas et b vers le haut', function () {
+    assert.strictEqual(calculateNumber(1.2, 3.7), 5);
+  });
+
+  it('arrondit une valeur en .5 vers le haut', function () {
+    assert.strictEqual(calculateNumber(1.5, 3.7), 6);
+  });
+
+  it('gère les nombres négatifs', function () {
+    assert.strictEqual(calculateNumber(-1.2, -3.7), -5);
+  });
+
+  it('arrondit un .5 négatif vers zéro', function () {
+    assert.strictEqual(calculateNumber(-1.5, 3.7), 3);
   });
 });
