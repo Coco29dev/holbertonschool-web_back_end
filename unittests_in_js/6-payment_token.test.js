@@ -11,3 +11,4 @@ describe('getPaymentTokenFromAPI', function () {
       .catch((error) => done(error));
   });
 });
+
